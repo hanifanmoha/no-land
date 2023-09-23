@@ -10,10 +10,13 @@ function generateField(field: IField): { exist: boolean; value: any } {
       let len = field.array_length?.min || 0;
       if (field.array_length?.type === "random") {
         len = faker.number.int({
-          min: field.array_length?.min || 0,
-          max: field.array_length?.max || 10,
+          min: 2,
+          max: 3,
+          // min: field.array_length?.min || 0,
+          // max: field.array_length?.max || 10,
         });
       }
+      console.log("rendering array wiht len", len, field.array_length);
       if (field.children?.[0]) {
         for (let i = 0; i < len; i++) {
           const f = generateField(field.children?.[0]);
@@ -39,15 +42,11 @@ function generateField(field: IField): { exist: boolean; value: any } {
       if (!mocker) {
         return { exist: false, value: undefined };
       }
-      const value = mocker.func({});
+      // @ts-expect-error: Ignore error for casting type to faker options
+      const value = mocker.func(...((mocker.options || []) as any));
       return { exist: true, value };
     }
   }
-
-  return {
-    exist: true,
-    value: "test",
-  };
 }
 
 export default function Preview({ fields }: { fields: IField[] }) {

@@ -5,7 +5,7 @@ interface IField {
   field_type: "object" | "array" | "field";
   array_length:
     | {
-        type: "fix" | "random";
+        type: "fixed" | "random";
         min: number;
         max: number;
       }
@@ -18,4 +18,5 @@ interface IMockOptions {
   label: string;
   key: string;
   func: (options: any) => any;
+  options: any;
 }
