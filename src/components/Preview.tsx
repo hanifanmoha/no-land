@@ -3,7 +3,7 @@
 import { mockOptions } from "@/utils/utils";
 import { Box } from "@chakra-ui/react";
 import { faker } from "@faker-js/faker";
-import { CodeBlock, dracula } from "react-code-blocks";
+import ReactJson from "react-json-view";
 
 function generateField(field: IField): { exist: boolean; value: any } {
   switch (field.field_type) {
@@ -58,18 +58,13 @@ export default function Preview({ fields }: { fields: IField[] }) {
     }
   }
 
+  console.log(payload);
+
   return (
-    <Box w="50%" h="100vh" overflow="auto">
-      <CodeBlock
-        text={JSON.stringify(payload, null, 2)}
-        language={`json`}
-        showLineNumbers={true}
-        theme={dracula}
-        customStyle={{
-          minHeight: "100%",
-          minWidth: "100%",
-        }}
-      />
+    <Box w="50%" h="100vh" overflow="auto" bgColor={"blackAlpha.200"}>
+      <Box p="24px">
+        <ReactJson src={payload} name={false} />
+      </Box>
     </Box>
   );
 }
