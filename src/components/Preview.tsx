@@ -1,14 +1,63 @@
 import { mockOptions } from "@/utils/utils";
 import { Box } from "@chakra-ui/react";
+import { faker } from "@faker-js/faker";
 import { CodeBlock, dracula } from "react-code-blocks";
 
+function generateField(field: IField): { exist: boolean; value: any } {
+  switch (field.field_type) {
+    case "array": {
+      const value: any[] = [];
+      let len = field.array_length?.min || 0;
+      if (field.array_length?.type === "random") {
+        len = faker.number.int({
+          min: field.array_length?.min || 0,
+          max: field.array_length?.max || 10,
+        });
+      }
+      if (field.children?.[0]) {
+        for (let i = 0; i < len; i++) {
+          const f = generateField(field.children?.[0]);
+          if (f.exist) {
+            value.push(f.value);
+          }
+        }
+      }
+      return { exist: true, value };
+    }
+    case "object": {
+      const value: any = {};
+      for (let child of field.children || []) {
+        const f = generateField(child);
+        if (f.exist) {
+          value[child.name || "undefined_key"] = f.value;
+        }
+      }
+      return { exist: true, value };
+    }
+    default: {
+      const mocker = mockOptions.find((opt) => opt.key === field.faker_type);
+      if (!mocker) {
+        return { exist: false, value: undefined };
+      }
+      const value = mocker.func({});
+      return { exist: true, value };
+    }
+  }
+
+  return {
+    exist: true,
+    value: "test",
+  };
+}
+
 export default function Preview({ fields }: { fields: IField[] }) {
-  const payload: { [key: string]: any } = {};
+  let payload: any = {};
 
   for (let field of fields) {
-    const mocker = mockOptions.find((opt) => opt.key === field.type);
-    if (!mocker) continue;
-    payload[field.name] = mocker.func({});
+    const f = generateField(field);
+    if (f.exist) {
+      payload = f.value;
+    }
   }
 
   return (

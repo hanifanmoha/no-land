@@ -1,14 +1,5 @@
-import {
-  Box,
-  VStack,
-  Button,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-} from "@chakra-ui/react";
-import { uuid } from "uuidv4";
+import { VStack, Button, Accordion } from "@chakra-ui/react";
+import { v4 } from "uuid";
 import { AddIcon } from "@chakra-ui/icons";
 import { Dispatch, SetStateAction, useState } from "react";
 import MockerForm from "./MockerForm";
@@ -22,13 +13,15 @@ export default function Mocker({
   fields: IField[];
   setFields: Dispatch<SetStateAction<IField[]>>;
 }) {
-  // const [fields, setFields] = useState<IField[]>([]);
-
   function handleAddField() {
     const newField: IField = {
-      id: uuid(),
-      name: faker.animal.type(),
-      type: defaultMockOption,
+      id: v4(),
+      name: `new_field_${faker.string.alphanumeric(10)}`,
+      is_root: false,
+      field_type: "field",
+      array_length: undefined,
+      faker_type: defaultMockOption,
+      children: [],
     };
     setFields((currents) => [...currents, newField]);
   }
@@ -46,19 +39,12 @@ export default function Mocker({
     <VStack w="50%" h="100vh" py="24px" px="16px" overflow="auto">
       <Accordion w="100%" mb="24px" defaultIndex={[]} allowMultiple>
         {fields.map((field) => (
-          <AccordionItem key={field.id}>
-            <h2>
-              <AccordionButton>
-                <Box as="span" flex="1" textAlign="left">
-                  {field.name}
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              <MockerForm field={field} onChange={handleUpdateField} />
-            </AccordionPanel>
-          </AccordionItem>
+          <MockerForm
+            key={field.id}
+            field={field}
+            onChange={handleUpdateField}
+            level={0}
+          />
         ))}
       </Accordion>
       <Button

@@ -1,7 +1,17 @@
 interface IField {
   id: string;
-  name: string;
-  type: string;
+  is_root: boolean | undefined;
+  name: string | undefined; // undefined for root
+  field_type: "object" | "array" | "field";
+  array_length:
+    | {
+        type: "fix" | "random";
+        min: number;
+        max: number;
+      }
+    | undefined; // undefined for non array
+  faker_type: string | undefined; // undefined for non field
+  children: IField[] | undefined; // undefined for field
 }
 
 interface IMockOptions {

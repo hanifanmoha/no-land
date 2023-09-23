@@ -1,0 +1,49 @@
+// Data
+
+- id
+- name
+- is_root
+- field_type
+  - not root : array, object, field
+  - root : array, object
+- array_length
+  - type : fix, random
+  - from
+  - to
+- faker_type
+  - field: filled
+  - array/object: null
+- children 
+  - array only has 1 child
+  - object has many children
+  - field doesnt have children
+
+{
+  id: uuid(),
+  name: "root",
+  is_root: true,
+  field_type: object,
+  array_length: 0,
+  faker_type: null,
+  children: []
+}
+
+{
+  id: uuid(),
+  name: null,
+  is_root: true,
+  field_type: object,
+  array_length: 0,
+  faker_type: null,
+  children: [
+    {
+      id: uuid(),
+      name: "username",
+      is_root: true,
+      field_type: object,
+      array_length: 0,
+      faker_type: null,
+      children: []
+    },
+  ]
+}

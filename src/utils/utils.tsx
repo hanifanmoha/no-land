@@ -31,4 +31,27 @@ export const mockOptions: IMockOptions[] = [
     key: "string.alphanumeric",
     func: faker.string.alphanumeric,
   },
+  // Internet
+  {
+    label: "Internet : Username",
+    key: "internet.userName",
+    func: faker.internet.userName,
+  },
+  {
+    label: "Internet : Email",
+    key: "internet.email",
+    func: faker.internet.email,
+  },
+  // Animal
+  {
+    label: "Animal : Type",
+    key: "animal.type",
+    func: faker.animal.type,
+  },
+  // Date
+  {
+    label: "Date : Anytime",
+    key: "date.anytime",
+    func: faker.date.anytime,
+  },
 ];
