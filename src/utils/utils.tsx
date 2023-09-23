@@ -1,6 +1,19 @@
 import { faker } from "@faker-js/faker";
+import { v4 } from "uuid";
 
 export const defaultMockOption = "string.alphanumeric";
+
+export function createNewField(): IField {
+  return {
+    id: v4(),
+    name: `new_field_${faker.string.alphanumeric(10)}`,
+    is_root: false,
+    field_type: "field",
+    array_length: undefined,
+    faker_type: defaultMockOption,
+    children: [],
+  };
+}
 
 export const mockOptions: IMockOptions[] = [
   // Number

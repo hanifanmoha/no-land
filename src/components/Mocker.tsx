@@ -6,6 +6,18 @@ import MockerForm from "./MockerForm";
 import { defaultMockOption } from "@/utils/utils";
 import { faker } from "@faker-js/faker";
 
+function newField(): IField {
+  return {
+    id: v4(),
+    name: `new_field_${faker.string.alphanumeric(10)}`,
+    is_root: false,
+    field_type: "field",
+    array_length: undefined,
+    faker_type: defaultMockOption,
+    children: [],
+  };
+}
+
 export default function Mocker({
   fields,
   setFields,
@@ -13,19 +25,6 @@ export default function Mocker({
   fields: IField[];
   setFields: Dispatch<SetStateAction<IField[]>>;
 }) {
-  function handleAddField() {
-    const newField: IField = {
-      id: v4(),
-      name: `new_field_${faker.string.alphanumeric(10)}`,
-      is_root: false,
-      field_type: "field",
-      array_length: undefined,
-      faker_type: defaultMockOption,
-      children: [],
-    };
-    setFields((currents) => [...currents, newField]);
-  }
-
   function handleUpdateField(field: IField) {
     setFields((currents) => {
       return currents.map((currentField) => {
@@ -47,14 +46,6 @@ export default function Mocker({
           />
         ))}
       </Accordion>
-      <Button
-        w="100%"
-        leftIcon={<AddIcon />}
-        colorScheme="teal"
-        onClick={handleAddField}
-      >
-        Add New Field
-      </Button>
     </VStack>
   );
 }
