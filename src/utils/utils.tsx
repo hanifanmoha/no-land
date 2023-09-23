@@ -9,7 +9,11 @@ export function createNewField(): IField {
     name: `new_field_${faker.string.alphanumeric(10)}`,
     is_root: false,
     field_type: "field",
-    array_length: undefined,
+    array_length: {
+      type: "random",
+      min: 3,
+      max: 10,
+    },
     faker_type: defaultMockOption,
     children: [],
   };

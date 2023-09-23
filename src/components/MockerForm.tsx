@@ -1,12 +1,5 @@
 import { createNewField, mockOptions } from "@/utils/utils";
-import {
-  Button,
-  Icon,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react";
+import { Icon, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { FaBars, FaEllipsisV, FaProjectDiagram } from "react-icons/fa";
 import {
   VStack,
@@ -86,7 +79,17 @@ export default function MockerForm({
 
   function handleChange(key: string) {
     return function (e: any) {
-      onChange({ ...field, [key]: e.target.value });
+      const val = e.target.value;
+
+      if (key === "field_type" && val === "array") {
+        field.array_length = {
+          type: "random",
+          min: 3,
+          max: 5,
+        };
+      }
+
+      onChange({ ...field, [key]: val });
     };
   }
 
@@ -169,26 +172,24 @@ export default function MockerForm({
     <>
       <AccordionItem key={field.id}>
         {/* Toggle */}
-        <h2>
-          <Box display="flex" py="12px" alignItems="center">
-            <AccordionButton>
-              <AccordionIcon />
-              {[...Array(level)].map((_, i) => (
-                <Box key={i} mr="32px">
-                  {/* <ArrowForwardIcon/> */}
-                </Box>
-              ))}
+        <Box display="flex" py="12px" alignItems="center">
+          <AccordionButton>
+            <AccordionIcon />
+            {[...Array(level)].map((_, i) => (
+              <Box key={i} mr="32px"></Box>
+            ))}
+            <h2>
               <Box as="span" mr="8px" textAlign="left">
                 {field.name}
               </Box>
-              {field.field_type === "object" && <Icon as={FaProjectDiagram} />}
-              {field.field_type === "array" && <Icon as={FaBars} />}
-            </AccordionButton>
-            <Box px="12px" minW="40px" cursor="pointer">
-              {renderMenu()}
-            </Box>
+            </h2>
+            {field.field_type === "object" && <Icon as={FaProjectDiagram} />}
+            {field.field_type === "array" && <Icon as={FaBars} />}
+          </AccordionButton>
+          <Box px="12px" minW="40px" cursor="pointer">
+            {renderMenu()}
           </Box>
-        </h2>
+        </Box>
         {/* Form */}
         <AccordionPanel
           pb={4}
