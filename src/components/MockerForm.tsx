@@ -1,5 +1,7 @@
 import { mockOptions } from "@/utils/utils";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { HStack, Icon } from "@chakra-ui/react";
+import { FaBars, FaProjectDiagram } from "react-icons/fa";
 import {
   VStack,
   Select,
@@ -61,26 +63,46 @@ export default function MockerForm({
     <>
       <AccordionItem key={field.id}>
         <h2>
-          <AccordionButton>
-            {[...Array(level)].map((_, i) => (
-              <Box key={i} mr="24px">
-                {/* <ArrowForwardIcon/> */}
+          <Box display="flex">
+            <AccordionButton>
+              <AccordionIcon />
+              {[...Array(level)].map((_, i) => (
+                <Box key={i} mr="32px">
+                  {/* <ArrowForwardIcon/> */}
+                </Box>
+              ))}
+              <Box as="span" mr="8px" textAlign="left">
+                {field.name}
               </Box>
-            ))}
-            <Box as="span" flex="1" textAlign="left">
-              {field.name}
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
+              {field.field_type === "object" && <Icon as={FaProjectDiagram} />}
+              {field.field_type === "array" && <Icon as={FaBars} />}
+            </AccordionButton>
+          </Box>
         </h2>
-        <AccordionPanel pb={4}>
-          <VStack>
+        <AccordionPanel
+          pb={4}
+          backgroundColor="blackAlpha.50"
+          borderRadius="lg"
+          padding="42px"
+        >
+          <VStack spacing="32px">
             <FormControl>
               <FormLabel>Field Name</FormLabel>
               <Input value={field.name || ""} onChange={handleChange("name")} />
             </FormControl>
             <FormControl>
-              <FormLabel>Type</FormLabel>
+              <FormLabel>Field Type</FormLabel>
+              <Select
+                value={field.field_type}
+                onChange={handleChange("field_type")}
+              >
+                <option value="field">Field</option>
+                <option value="object">Object</option>
+                <option value="array">Array</option>
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Faker Type</FormLabel>
               <Select
                 value={field.faker_type}
                 onChange={handleChange("faker_type")}
