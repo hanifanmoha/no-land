@@ -144,9 +144,8 @@ export function convertFieldToPayload(fields: IField[]) {
   return payload;
 }
 
-export function convertFieldToEncoded(fields: IField[], baseURL?: string) {
-  const locationOrigin = location.origin;
-  return locationOrigin + `/api/mock/` + btoa(JSON.stringify(fields));
+export function convertFieldToEncoded(fields: IField[], baseURL: string = "") {
+  return baseURL + `/api/mock/` + btoa(JSON.stringify(fields));
 }
 
 export function convertEncodedToField(encodedString: string): IField[] {

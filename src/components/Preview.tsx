@@ -1,12 +1,12 @@
+"use client";
+
 import {
   convertFieldToEncoded,
   convertFieldToPayload,
   copyToClipboard,
-  mockOptions,
 } from "@/utils/utils";
 import { CopyIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Input, VStack } from "@chakra-ui/react";
-import { faker } from "@faker-js/faker";
 import dynamic from "next/dynamic";
 
 const ReactJSONWithNoSSR = dynamic(() => import("react-json-view"), {
@@ -15,7 +15,9 @@ const ReactJSONWithNoSSR = dynamic(() => import("react-json-view"), {
 
 export default function Preview({ fields }: { fields: IField[] }) {
   const payload: any = convertFieldToPayload(fields);
-  const generatedMocker: string = convertFieldToEncoded(fields);
+  const locationOrigin =
+    typeof window !== "undefined" ? window?.location?.origin : "";
+  const generatedMocker: string = convertFieldToEncoded(fields, locationOrigin);
 
   return (
     <Box
