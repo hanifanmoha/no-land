@@ -1,75 +1,61 @@
-"use client";
-
-import { mockOptions } from "@/utils/utils";
-import { Box } from "@chakra-ui/react";
+import {
+  convertFieldToEncoded,
+  convertFieldToPayload,
+  copyToClipboard,
+  mockOptions,
+} from "@/utils/utils";
+import { CopyIcon } from "@chakra-ui/icons";
+import { Box, Button, HStack, Input, VStack } from "@chakra-ui/react";
 import { faker } from "@faker-js/faker";
 import dynamic from "next/dynamic";
-
-function generateField(field: IField): { exist: boolean; value: any } {
-  switch (field.field_type) {
-    case "array": {
-      const value: any[] = [];
-      let len = field.array_length?.min || 0;
-      if (field.array_length?.type === "random") {
-        len = faker.number.int({
-          min: field.array_length?.min || 0,
-          max: field.array_length?.max || 10,
-        });
-      }
-      if (field.children?.[0]) {
-        for (let i = 0; i < len; i++) {
-          const f = generateField(field.children?.[0]);
-          if (f.exist) {
-            value.push(f.value);
-          }
-        }
-      }
-      return { exist: true, value };
-    }
-    case "object": {
-      const value: any = {};
-      for (let child of field.children || []) {
-        const f = generateField(child);
-        if (f.exist) {
-          value[child.name || "undefined_key"] = f.value;
-        }
-      }
-      return { exist: true, value };
-    }
-    default: {
-      const mocker = mockOptions.find((opt) => opt.key === field.faker_type);
-      if (!mocker) {
-        return { exist: false, value: undefined };
-      }
-      // @ts-expect-error: Ignore error for casting type to faker options
-      const value = mocker.func(...((mocker.options || []) as any));
-      return { exist: true, value };
-    }
-  }
-}
 
 const ReactJSONWithNoSSR = dynamic(() => import("react-json-view"), {
   ssr: false,
 });
 
 export default function Preview({ fields }: { fields: IField[] }) {
-  let payload: any = {};
-
-  for (let field of fields) {
-    const f = generateField(field);
-    if (f.exist) {
-      payload = f.value;
-    }
-  }
+  const payload: any = convertFieldToPayload(fields);
+  const generatedMocker: string = convertFieldToEncoded(fields);
 
   return (
-    <Box w="50%" h="100vh" overflow="auto" bgColor={"blackAlpha.200"}>
+    <Box
+      w="50%"
+      h="100vh"
+      overflow="auto"
+      bgColor={"blackAlpha.800"}
+      position={"relative"}
+    >
       <ReactJSONWithNoSSR
         src={payload}
         name={false}
         theme={"monokai"}
         style={{ padding: "24px" }}
       />
+      <Box
+        position={"sticky"}
+        bottom={"0px"}
+        zIndex={100}
+        bgColor={"gray.800"}
+        padding={"16px"}
+        borderTop={"1px"}
+        borderStyle={"solid"}
+        borderColor={"gray.500"}
+      >
+        <HStack justifyContent={"flex-start"} flex={1}>
+          <Input
+            bgColor={"gray.900"}
+            value={generatedMocker}
+            color={"white"}
+            onChange={() => {}}
+          />
+          <Button
+            leftIcon={<CopyIcon />}
+            onClick={() => copyToClipboard(generatedMocker)}
+          >
+            Copy
+          </Button>
+        </HStack>
+      </Box>
     </Box>
   );
 }

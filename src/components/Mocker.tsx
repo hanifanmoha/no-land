@@ -1,6 +1,5 @@
 import { VStack, Button, Accordion } from "@chakra-ui/react";
 import { v4 } from "uuid";
-import { AddIcon } from "@chakra-ui/icons";
 import { Dispatch, SetStateAction, useState } from "react";
 import MockerForm from "./MockerForm";
 import { defaultMockOption } from "@/utils/utils";

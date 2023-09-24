@@ -87,3 +87,79 @@ export const mockOptions: IMockOptions[] = [
     options: [],
   },
 ];
+
+function generateField(field: IField): { exist: boolean; value: any } {
+  switch (field.field_type) {
+    case "array": {
+      const value: any[] = [];
+      let len = field.array_length?.min || 0;
+      if (field.array_length?.type === "random") {
+        len = faker.number.int({
+          min: field.array_length?.min || 0,
+          max: field.array_length?.max || 10,
+        });
+      }
+      if (field.children?.[0]) {
+        for (let i = 0; i < len; i++) {
+          const f = generateField(field.children?.[0]);
+          if (f.exist) {
+            value.push(f.value);
+          }
+        }
+      }
+      return { exist: true, value };
+    }
+    case "object": {
+      const value: any = {};
+      for (let child of field.children || []) {
+        const f = generateField(child);
+        if (f.exist) {
+          value[child.name || "undefined_key"] = f.value;
+        }
+      }
+      return { exist: true, value };
+    }
+    default: {
+      const mocker = mockOptions.find((opt) => opt.key === field.faker_type);
+      if (!mocker) {
+        return { exist: false, value: undefined };
+      }
+      // @ts-expect-error: Ignore error for casting type to faker options
+      const value = mocker.func(...((mocker.options || []) as any));
+      return { exist: true, value };
+    }
+  }
+}
+
+export function convertFieldToPayload(fields: IField[]) {
+  let payload: any = {};
+
+  for (let field of fields) {
+    const f = generateField(field);
+    if (f.exist) {
+      payload = f.value;
+    }
+  }
+
+  return payload;
+}
+
+export function convertFieldToEncoded(fields: IField[], baseURL?: string) {
+  const locationOrigin = location.origin;
+  return locationOrigin + `/api/mock/` + btoa(JSON.stringify(fields));
+}
+
+export function convertEncodedToField(encodedString: string): IField[] {
+  const decoded = atob(encodedString);
+  return JSON.parse(decoded);
+}
+
+export function copyToClipboard(text: string) {
+  var input = document.createElement("input");
+  input.setAttribute("value", text);
+  document.body.appendChild(input);
+  input.select();
+  var result = document.execCommand("copy");
+  document.body.removeChild(input);
+  return result;
+}
