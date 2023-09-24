@@ -5,15 +5,25 @@ import Preview from "@/components/Preview";
 import Mocker from "@/components/Mocker";
 import { useState } from "react";
 import { v4 } from "uuid";
+import Head from "next/head";
+import favicon from "../app/favicon.ico";
 
 export default function Home() {
   const [fields, setFields] = useState<IField[]>(initialFields);
 
+  console.log(favicon);
+
   return (
-    <HStack>
-      <Preview fields={fields} />
-      <Mocker fields={fields} setFields={setFields} />
-    </HStack>
+    <>
+      <Head>
+        <title>No-Land | The Golden City Does Exist!</title>
+        <link rel="shortcut icon" href={favicon.src} />
+      </Head>
+      <HStack>
+        <Preview fields={fields} />
+        <Mocker fields={fields} setFields={setFields} />
+      </HStack>
+    </>
   );
 }
 
