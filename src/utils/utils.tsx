@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { v4 } from "uuid";
+import { btoa, atob } from "js-base64";
 
 export const defaultMockOption = "string.alphanumeric";
 
@@ -158,7 +159,7 @@ export function copyToClipboard(text: string) {
   input.setAttribute("value", text);
   document.body.appendChild(input);
   input.select();
-  var result = document.execCommand("copy");
+  const result = document.execCommand("copy");
   document.body.removeChild(input);
   return result;
 }

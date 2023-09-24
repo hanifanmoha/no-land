@@ -22,14 +22,14 @@ export default function handler(req: MockRequest, res: NextApiResponse<any>) {
   try {
     fields = convertEncodedToField(encoded!);
   } catch (error) {
-    errMessage = "get encoded field";
+    errMessage = "decode to field";
     err = error;
   }
 
   try {
     result = convertFieldToPayload(fields!);
   } catch (error) {
-    errMessage = "get encoded field";
+    errMessage = "generate payload";
     err = error;
   }
 
