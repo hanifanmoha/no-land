@@ -3,7 +3,7 @@
 import { mockOptions } from "@/utils/utils";
 import { Box } from "@chakra-ui/react";
 import { faker } from "@faker-js/faker";
-import ReactJson from "react-json-view";
+import dynamic from "next/dynamic";
 
 function generateField(field: IField): { exist: boolean; value: any } {
   switch (field.field_type) {
@@ -48,6 +48,10 @@ function generateField(field: IField): { exist: boolean; value: any } {
   }
 }
 
+const ReactJSONWithNoSSR = dynamic(() => import("react-json-view"), {
+  ssr: false,
+});
+
 export default function Preview({ fields }: { fields: IField[] }) {
   let payload: any = {};
 
@@ -58,13 +62,14 @@ export default function Preview({ fields }: { fields: IField[] }) {
     }
   }
 
-  console.log(payload);
-
   return (
     <Box w="50%" h="100vh" overflow="auto" bgColor={"blackAlpha.200"}>
-      <Box p="24px">
-        <ReactJson src={payload} name={false} />
-      </Box>
+      <ReactJSONWithNoSSR
+        src={payload}
+        name={false}
+        theme={"monokai"}
+        style={{ padding: "24px" }}
+      />
     </Box>
   );
 }
