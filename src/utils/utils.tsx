@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { v4 } from "uuid";
-import { btoa, atob } from "js-base64";
+import { encodeURI, decode } from "js-base64";
 
 export const defaultMockOption = "string.alphanumeric";
 
@@ -146,11 +146,11 @@ export function convertFieldToPayload(fields: IField[]) {
 }
 
 export function convertFieldToEncoded(fields: IField[], baseURL: string = "") {
-  return baseURL + `/api/mock/` + btoa(JSON.stringify(fields));
+  return baseURL + `/api/mock/` + encodeURI(JSON.stringify(fields));
 }
 
 export function convertEncodedToField(encodedString: string): IField[] {
-  const decoded = atob(encodedString);
+  const decoded = decode(encodedString);
   return JSON.parse(decoded);
 }
 
