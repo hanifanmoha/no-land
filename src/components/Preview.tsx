@@ -5,7 +5,7 @@ import {
   convertFieldToPayload,
   copyToClipboard,
 } from "@/utils/utils";
-import { CopyIcon } from "@chakra-ui/icons";
+import { CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Input, VStack } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 
@@ -18,6 +18,14 @@ export default function Preview({ fields }: { fields: IField[] }) {
   const locationOrigin =
     typeof window !== "undefined" ? window?.location?.origin : "";
   const generatedMocker: string = convertFieldToEncoded(fields, locationOrigin);
+
+  function handleOpenAPI() {
+    window.open(generatedMocker);
+  }
+
+  function handleCopy() {
+    copyToClipboard(generatedMocker);
+  }
 
   return (
     <Box
@@ -50,11 +58,11 @@ export default function Preview({ fields }: { fields: IField[] }) {
             color={"white"}
             onChange={() => {}}
           />
-          <Button
-            leftIcon={<CopyIcon />}
-            onClick={() => copyToClipboard(generatedMocker)}
-          >
+          <Button leftIcon={<CopyIcon />} onClick={handleCopy}>
             Copy
+          </Button>
+          <Button leftIcon={<ExternalLinkIcon />} onClick={handleOpenAPI}>
+            Go
           </Button>
         </HStack>
       </Box>
