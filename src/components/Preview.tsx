@@ -7,17 +7,29 @@ import {
 } from "@/utils/utils";
 import { CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Input, VStack } from "@chakra-ui/react";
+import { useDebounce } from "@uidotdev/usehooks";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
 const ReactJSONWithNoSSR = dynamic(() => import("react-json-view"), {
   ssr: false,
 });
 
 export default function Preview({ fields }: { fields: IField[] }) {
-  const payload: any = convertFieldToPayload(fields);
+  const debouncedFields = useDebounce(fields, 300);
+  const [generatedPayload, setGeneratedPayload] = useState<any>({});
+
+  // const payload: any = convertFieldToPayload(fields);
   const locationOrigin =
     typeof window !== "undefined" ? window?.location?.origin : "";
   const generatedMocker: string = convertFieldToEncoded(fields, locationOrigin);
+
+  useEffect(() => {
+    async function regenerate() {
+      setGeneratedPayload(convertFieldToPayload(debouncedFields));
+    }
+    regenerate();
+  }, [debouncedFields]);
 
   function handleOpenAPI() {
     window.open(generatedMocker);
@@ -36,7 +48,7 @@ export default function Preview({ fields }: { fields: IField[] }) {
       position={"relative"}
     >
       <ReactJSONWithNoSSR
-        src={payload}
+        src={generatedPayload}
         name={false}
         theme={"monokai"}
         style={{ padding: "24px", minHeight: "100vh" }}
