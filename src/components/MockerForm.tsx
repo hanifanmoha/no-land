@@ -1,5 +1,14 @@
 import { createNewField, mockOptions } from "@/utils/utils";
-import { Icon, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import {
+  Button,
+  Collapse,
+  Divider,
+  Icon,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/react";
 import { FaBars, FaEllipsisV, FaProjectDiagram } from "react-icons/fa";
 import {
   VStack,
@@ -7,36 +16,40 @@ import {
   FormControl,
   FormLabel,
   Input,
-  AccordionPanel,
-  AccordionItem,
-  AccordionButton,
   Box,
-  AccordionIcon,
 } from "@chakra-ui/react";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   DeleteIcon,
   SmallAddIcon,
 } from "@chakra-ui/icons";
 
 export default function MockerForm({
   field,
-  onChange,
-  onDelete,
-  onMove,
   level,
   isFirstChild,
   isLastChild,
+  expanded,
+  onChange,
+  onDelete,
+  onMove,
+  onToggleExpand,
 }: {
   field: IField;
-  onChange: (field: IField) => void;
-  onDelete?: (field: IField) => void;
-  onMove?: (field: IField, dir: 1 | -1) => void;
   level: number;
   isFirstChild?: boolean;
   isLastChild?: boolean;
+  expanded: string[];
+  onChange: (field: IField) => void;
+  onDelete?: (field: IField) => void;
+  onMove?: (field: IField, dir: 1 | -1) => void;
+  onToggleExpand: (id: string) => void;
 }) {
+  const isExpanded = expanded.indexOf(field.id) >= 0;
+
   function handleChildChange(child: IField) {
     const newField: IField = {
       ...field,
@@ -117,12 +130,14 @@ export default function MockerForm({
         <MockerForm
           key={child.id}
           field={child}
-          onChange={handleChildChange}
-          onDelete={handleChildDelete}
-          onMove={handleChildMove}
           level={level + 1}
           isFirstChild={index === 0}
           isLastChild={index === (field.children || []).length - 1}
+          expanded={expanded}
+          onToggleExpand={onToggleExpand}
+          onChange={handleChildChange}
+          onDelete={handleChildDelete}
+          onMove={handleChildMove}
         />
       ));
     }
@@ -170,72 +185,77 @@ export default function MockerForm({
 
   return (
     <>
-      <AccordionItem key={field.id}>
-        {/* Toggle */}
-        <Box display="flex" py="12px" alignItems="center">
-          <AccordionButton>
-            {[...Array(level)].map((_, i) => (
-              <Box key={i} mr="32px"></Box>
-            ))}
-            <AccordionIcon />
-            <h2>
-              <Box as="span" mr="8px" textAlign="left">
-                {field.name}
-              </Box>
-            </h2>
-            {field.field_type === "object" && <Icon as={FaProjectDiagram} />}
-            {field.field_type === "array" && <Icon as={FaBars} />}
-          </AccordionButton>
-          <Box px="12px" minW="40px" cursor="pointer">
-            {renderMenu()}
-          </Box>
-        </Box>
-        {/* Form */}
-        <AccordionPanel
-          pb={4}
-          backgroundColor="blackAlpha.50"
-          borderRadius="lg"
-          padding="42px"
+      {/* Toggle */}
+      <Divider />
+      <Box display="flex" py="12px" alignItems="center">
+        <Button
+          flex={1}
+          variant={"ghost"}
+          display={"flex"}
+          justifyContent={"flex-start"}
+          fontWeight={"normal"}
+          onClick={() => onToggleExpand(field.id)}
         >
-          <VStack spacing="32px">
+          {[...Array(level)].map((_, i) => (
+            <Box key={i} mr="32px"></Box>
+          ))}
+          {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          <Box as="span" ml="12px" mr="8px" textAlign="left">
+            {field.name}
+          </Box>
+          {field.field_type === "object" && <Icon as={FaProjectDiagram} />}
+          {field.field_type === "array" && <Icon as={FaBars} />}
+        </Button>
+        <Box px="12px" minW="40px" cursor="pointer">
+          {renderMenu()}
+        </Box>
+      </Box>
+      {/* Form */}
+      <Collapse in={isExpanded}>
+        <VStack
+          spacing={"32px"}
+          padding={"24px"}
+          backgroundColor={"blackAlpha.100"}
+          rounded={"md"}
+          mb={"12px"}
+        >
+          <FormControl>
+            <FormLabel>Field Name</FormLabel>
+            <Input
+              value={field.name || ""}
+              onChange={handleChange("name")}
+              disabled={field.is_root}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Field Type</FormLabel>
+            <Select
+              value={field.field_type}
+              onChange={handleChange("field_type")}
+            >
+              {!field.is_root && <option value="field">Field</option>}
+              <option value="object">Object</option>
+              <option value="array">Array</option>
+            </Select>
+          </FormControl>
+          {field.field_type === "field" && (
             <FormControl>
-              <FormLabel>Field Name</FormLabel>
-              <Input
-                value={field.name || ""}
-                onChange={handleChange("name")}
-                disabled={field.is_root}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Field Type</FormLabel>
+              <FormLabel>Faker Type</FormLabel>
               <Select
-                value={field.field_type}
-                onChange={handleChange("field_type")}
+                value={field.faker_type}
+                onChange={handleChange("faker_type")}
               >
-                {!field.is_root && <option value="field">Field</option>}
-                <option value="object">Object</option>
-                <option value="array">Array</option>
+                {mockOptions.map((opt) => (
+                  <option key={opt.key} value={opt.key}>
+                    {opt.label}
+                  </option>
+                ))}
               </Select>
             </FormControl>
-            {field.field_type === "field" && (
-              <FormControl>
-                <FormLabel>Faker Type</FormLabel>
-                <Select
-                  value={field.faker_type}
-                  onChange={handleChange("faker_type")}
-                >
-                  {mockOptions.map((opt) => (
-                    <option key={opt.key} value={opt.key}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          </VStack>
-        </AccordionPanel>
-        {renderChildren()}
-      </AccordionItem>
+          )}
+        </VStack>
+      </Collapse>
+      {renderChildren()}
     </>
   );
 }

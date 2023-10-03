@@ -1,3 +1,10 @@
+// Forms
+- kalau nggak ada action yang bisa dilakuin gimana
+- kalau array harusnya cuma bisa punya 1 child, kalau field nggak punya child
+- kasih notif kalau actionnya di kanan atas
+- 
+
+
 // Data
 
 - id
