@@ -19,7 +19,6 @@ export default function Preview({ fields }: { fields: IField[] }) {
   const debouncedFields = useDebounce(fields, 300);
   const [generatedPayload, setGeneratedPayload] = useState<any>({});
 
-  // const payload: any = convertFieldToPayload(fields);
   const locationOrigin =
     typeof window !== "undefined" ? window?.location?.origin : "";
   const generatedMocker: string = convertFieldToEncoded(fields, locationOrigin);
