@@ -9,7 +9,7 @@ import Head from "next/head";
 import favicon from "../app/favicon.ico";
 
 export default function Home() {
-  const [fields, setFields] = useState<IField[]>(initialFields);
+  const [fields, setFields] = useState<IField[]>(exampleFields);
 
   console.log(favicon);
 
@@ -28,6 +28,18 @@ export default function Home() {
 }
 
 const initialFields: IField[] = [
+  {
+    id: v4(),
+    name: "<root>",
+    is_root: true,
+    field_type: "object",
+    array_length: undefined,
+    faker_type: undefined,
+    children: [],
+  },
+];
+
+const exampleFields: IField[] = [
   {
     id: v4(),
     name: "<root>",

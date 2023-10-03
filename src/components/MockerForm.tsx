@@ -174,10 +174,10 @@ export default function MockerForm({
         {/* Toggle */}
         <Box display="flex" py="12px" alignItems="center">
           <AccordionButton>
-            <AccordionIcon />
             {[...Array(level)].map((_, i) => (
               <Box key={i} mr="32px"></Box>
             ))}
+            <AccordionIcon />
             <h2>
               <Box as="span" mr="8px" textAlign="left">
                 {field.name}
@@ -200,7 +200,11 @@ export default function MockerForm({
           <VStack spacing="32px">
             <FormControl>
               <FormLabel>Field Name</FormLabel>
-              <Input value={field.name || ""} onChange={handleChange("name")} />
+              <Input
+                value={field.name || ""}
+                onChange={handleChange("name")}
+                disabled={field.is_root}
+              />
             </FormControl>
             <FormControl>
               <FormLabel>Field Type</FormLabel>
@@ -208,24 +212,26 @@ export default function MockerForm({
                 value={field.field_type}
                 onChange={handleChange("field_type")}
               >
-                <option value="field">Field</option>
+                {!field.is_root && <option value="field">Field</option>}
                 <option value="object">Object</option>
                 <option value="array">Array</option>
               </Select>
             </FormControl>
-            <FormControl>
-              <FormLabel>Faker Type</FormLabel>
-              <Select
-                value={field.faker_type}
-                onChange={handleChange("faker_type")}
-              >
-                {mockOptions.map((opt) => (
-                  <option key={opt.key} value={opt.key}>
-                    {opt.label}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+            {field.field_type === "field" && (
+              <FormControl>
+                <FormLabel>Faker Type</FormLabel>
+                <Select
+                  value={field.faker_type}
+                  onChange={handleChange("faker_type")}
+                >
+                  {mockOptions.map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
           </VStack>
         </AccordionPanel>
         {renderChildren()}

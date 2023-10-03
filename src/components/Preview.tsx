@@ -39,7 +39,7 @@ export default function Preview({ fields }: { fields: IField[] }) {
         src={payload}
         name={false}
         theme={"monokai"}
-        style={{ padding: "24px" }}
+        style={{ padding: "24px", minHeight: "100vh" }}
       />
       <Box
         position={"sticky"}
