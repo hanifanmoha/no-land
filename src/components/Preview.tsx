@@ -46,12 +46,14 @@ export default function Preview({ fields }: { fields: IField[] }) {
       bgColor={"blackAlpha.800"}
       position={"relative"}
     >
-      <ReactJSONWithNoSSR
-        src={generatedPayload}
-        name={false}
-        theme={"monokai"}
-        style={{ padding: "24px", minHeight: "100vh" }}
-      />
+      <Box minHeight={"100vh"}>
+        <ReactJSONWithNoSSR
+          src={generatedPayload}
+          name={false}
+          theme={"monokai"}
+          style={{ padding: "24px", minHeight: "100vh" }}
+        />
+      </Box>
       <Box
         position={"sticky"}
         bottom={"0px"}
